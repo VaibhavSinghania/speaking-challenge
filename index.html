@@ -1,0 +1,711 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Speaking Challenge</title>
+<meta name="description" content="Spin a random topic, prep, and speak against the clock. Made by @vaibhav_singhania on Instagram." />
+<meta name="author" content="@vaibhav_singhania" />
+<meta name="referrer" content="strict-origin-when-cross-origin" />
+<meta property="og:title" content="Speaking Challenge" />
+<meta property="og:description" content="Spin a random topic, prep, and speak against the clock. By @vaibhav_singhania" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://vaibhavsinghania.github.io/speaking-challenge/" />
+<meta property="og:image" content="https://vaibhavsinghania.github.io/speaking-challenge/preview.png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="theme-color" content="#0b0d17" />
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-eJmhdBt5IdebOqiArJHw/h6RZrsjmhm2b2vJMlzcQug='; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src data:; connect-src 'none'; base-uri 'none'; form-action 'none'; object-src 'none'" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='10' fill='%23ffd84a'/%3E%3Crect x='15' y='7' width='10' height='16' rx='5' fill='%230b0d17'/%3E%3Cpath d='M10.5 19a9.5 9.5 0 0 0 19 0M20 28.5V33M15 33h10' stroke='%230b0d17' stroke-width='2.6' stroke-linecap='round' fill='none'/%3E%3C/svg%3E" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Instrument+Serif:ital@1&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --ink: #0b0d17;
+    --ink-2: #141729;
+    --line: rgba(255,255,255,.09);
+    --text: #f3f1ea;
+    --muted: #8d90a6;
+    --sig: #ffd84a;      /* signal yellow */
+    --sig-deep: #e9b500;
+    --coral: #ff6b4a;
+    --violet: #7c6cff;
+    --row: clamp(64px, 11vh, 112px);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body {
+    background: var(--ink);
+    color: var(--text);
+    font-family: "Bricolage Grotesque", system-ui, sans-serif;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+  .mono { font-family: "JetBrains Mono", ui-monospace, monospace; }
+
+  /* ---------- atmosphere ---------- */
+  .bg { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+  .blob { position: absolute; border-radius: 50%; filter: blur(90px); opacity: .35; }
+  .b1 { width: 55vmax; height: 55vmax; background: var(--violet); top: -25vmax; left: -15vmax; animation: drift 22s ease-in-out infinite alternate; }
+  .b2 { width: 45vmax; height: 45vmax; background: #1d6b6b; bottom: -22vmax; right: -12vmax; animation: drift 28s ease-in-out infinite alternate-reverse; }
+  .b3 { width: 30vmax; height: 30vmax; background: var(--sig); top: 40%; left: 55%; opacity: 0; transition: opacity 1.2s; }
+  body.locked .b3 { opacity: .12; }
+  body.urgent .b3 { background: var(--coral); opacity: .22; }
+  @keyframes drift { to { transform: translate(8vmax, 6vmax) scale(1.1); } }
+  .grain {
+    position: absolute; inset: -50%;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 .55 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+    opacity: .07; animation: grain 1.2s steps(6) infinite;
+  }
+  @keyframes grain { 0%{transform:translate(0,0)} 33%{transform:translate(-3%,2%)} 66%{transform:translate(2%,-3%)} 100%{transform:translate(0,0)} }
+  .vignette { position: fixed; inset: 0; pointer-events: none; z-index: 1;
+    box-shadow: inset 0 0 0 0 rgba(255,107,74,0); transition: box-shadow .3s; }
+  body.pulse .vignette { animation: vpulse 1s ease-out infinite; }
+  @keyframes vpulse { 0% { box-shadow: inset 0 0 140px 20px rgba(255,107,74,.45);} 100% { box-shadow: inset 0 0 60px 0 rgba(255,107,74,0);} }
+
+  /* ---------- layout ---------- */
+  .app { position: relative; z-index: 2; min-height: 100%; display: grid; grid-template-rows: auto 1fr auto; padding: 22px clamp(16px, 4vw, 48px); gap: 12px; }
+  header { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+  .brand { display: flex; align-items: center; gap: 12px; }
+  .mark {
+    width: 42px; height: 42px; border-radius: 12px; background: var(--sig); color: var(--ink);
+    display: grid; place-items: center;
+    box-shadow: 0 6px 24px rgba(255,216,74,.25); transform: rotate(-8deg);
+  }
+  .mark svg { width: 32px; height: 32px; }
+  .mark .wave { opacity: 0; transition: opacity .3s; }
+  body.spinning .mark .wave, body.timing .mark .wave { opacity: 1; }
+  body.timing .mark .wave { animation: blink .5s infinite alternate; }
+  body.spinning .mark { animation: wob .35s ease-in-out infinite alternate; }
+  @keyframes wob { from { transform: rotate(-14deg);} to { transform: rotate(10deg);} }
+  .brand h1 { font-size: 22px; font-weight: 800; letter-spacing: -.02em; line-height: 1; }
+  .brand h1 em { font-family: "Instrument Serif", serif; font-weight: 400; font-size: 1.15em; color: var(--sig); }
+  .brand p { font-size: 11px; color: var(--muted); letter-spacing: .14em; text-transform: uppercase; margin-top: 4px; }
+
+  main { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: clamp(14px, 2.6vh, 26px); }
+
+  .status { font-size: 12px; letter-spacing: .32em; text-transform: uppercase; color: var(--muted); display: flex; gap: 10px; align-items: center; min-height: 18px; }
+  .status .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--muted); }
+  body.spinning .status .dot { background: var(--sig); animation: blink .25s infinite alternate; }
+  body.locked .status { color: var(--sig); }
+  body.locked .status .dot { background: var(--sig); }
+  body.timing .status { color: var(--text); }
+  body.timing .status .dot { background: var(--coral); animation: blink .6s infinite alternate; }
+  @keyframes blink { to { opacity: .2; } }
+
+  /* ---------- the reel ---------- */
+  .reel-wrap { position: relative; width: min(1040px, 100%); }
+  .reel {
+    position: relative; height: calc(var(--row) * 3); overflow: hidden;
+    container-type: inline-size;
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 30%, #000 70%, transparent 100%);
+            mask-image: linear-gradient(to bottom, transparent 0%, #000 30%, #000 70%, transparent 100%);
+  }
+  .strip { position: absolute; left: 0; right: 0; top: 0; will-change: transform, filter; }
+  .row {
+    height: var(--row); display: flex; align-items: center; justify-content: center;
+    padding: 0 clamp(36px, 7cqw, 80px); white-space: nowrap;
+    font-weight: 800; letter-spacing: -.035em; line-height: 1;
+    font-size: min(clamp(26px, 6.2cqw, 64px), calc(86cqw / (var(--len) * .56)));
+    color: rgba(243,241,234,.55); transition: color .3s, transform .5s cubic-bezier(.2,1.6,.4,1);
+  }
+  .row.win { color: var(--sig); transform: scale(1.04); }
+  .row.ph { color: var(--text); font-weight: 600; }
+
+  /* slot frame */
+  .slot { position: absolute; left: 0; right: 0; top: var(--row); height: var(--row); pointer-events: none; }
+  .slot::before, .slot::after { content: ""; position: absolute; left: 6%; right: 6%; height: 1px; background: linear-gradient(90deg, transparent, var(--line) 15%, var(--line) 85%, transparent); }
+  .slot::before { top: 0; } .slot::after { bottom: 0; }
+  body.locked .slot::before, body.locked .slot::after { background: linear-gradient(90deg, transparent, rgba(255,216,74,.55) 20%, rgba(255,216,74,.55) 80%, transparent); }
+  .flap { position: absolute; top: 50%; width: 0; height: 0; border-top: 9px solid transparent; border-bottom: 9px solid transparent; margin-top: -9px; transform-origin: center; }
+  .flap.l { left: 0; border-left: 14px solid var(--sig); }
+  .flap.r { right: 0; border-right: 14px solid var(--sig); }
+  .flap.kick.l { animation: kickL .09s ease-out; }
+  .flap.kick.r { animation: kickR .09s ease-out; }
+  @keyframes kickL { 50% { transform: rotate(-28deg) translateX(-3px); } }
+  @keyframes kickR { 50% { transform: rotate(28deg) translateX(3px); } }
+
+
+  /* ---------- focus mode (timer takes over the screen) ---------- */
+  main, footer { transition: opacity .45s, transform .6s cubic-bezier(.2,.9,.3,1), filter .45s; }
+  body.in-focus main, body.in-focus footer { opacity: 0; transform: scale(.94); filter: blur(8px); pointer-events: none; }
+  .focus {
+    position: fixed; inset: 0; z-index: 3; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: clamp(14px, 2.4vh, 26px); padding: 84px 16px 28px;
+    opacity: 0; visibility: hidden; transform: scale(1.05); pointer-events: none;
+    transition: opacity .4s ease, transform .5s cubic-bezier(.2,.9,.3,1), visibility 0s .5s;
+  }
+  body.in-focus .focus { opacity: 1; visibility: visible; transform: none; pointer-events: auto;
+    transition: opacity .5s ease .15s, transform .7s cubic-bezier(.2,.9,.3,1) .15s, visibility 0s; }
+  .f-head { display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center; }
+  .f-label { font-size: 12px; letter-spacing: .32em; text-transform: uppercase; color: var(--sig); }
+  .f-topic { font-weight: 800; letter-spacing: -.03em; font-size: clamp(22px, 3.6vw, 42px); line-height: 1.1; max-width: 900px; }
+
+  .dial { position: relative; width: min(82vw, 52vh, 470px); aspect-ratio: 1; container-type: inline-size; display: grid; place-items: center; }
+  .dial svg { position: absolute; inset: 0; width: 100%; height: 100%; transform: rotate(-90deg); overflow: visible; }
+  .track { fill: none; stroke: rgba(255,255,255,.06); stroke-width: 18; }
+  .arc { fill: none; stroke: var(--sig); stroke-width: 18; stroke-linecap: round; filter: drop-shadow(0 0 16px rgba(255,216,74,.35)); transition: stroke .4s; }
+  #ticks line { stroke: rgba(255,255,255,.1); stroke-width: 2.4; stroke-linecap: round; transition: stroke .35s; }
+  #ticks line.lit { stroke: rgba(243,241,234,.65); }
+  body.urgent .arc { stroke: var(--coral); filter: drop-shadow(0 0 22px rgba(255,107,74,.5)); }
+  body.urgent #ticks line.lit { stroke: var(--coral); }
+  body.over .arc { stroke: var(--coral); filter: drop-shadow(0 0 16px rgba(255,107,74,.45)); transition: stroke-dashoffset 1s cubic-bezier(.2,.9,.3,1), stroke .3s; animation: ringflash 1.6s ease-out; }
+  body.over #ticks line.lit { stroke: var(--coral); }
+  @keyframes ringflash { 0% { filter: drop-shadow(0 0 0 rgba(255,107,74,0)); } 35% { filter: drop-shadow(0 0 42px rgba(255,107,74,.95)); } 100% { filter: drop-shadow(0 0 16px rgba(255,107,74,.45)); } }
+
+  .f-clock { font-weight: 800; font-size: 25cqw; letter-spacing: -.05em; line-height: 1; font-variant-numeric: tabular-nums; color: var(--text); transition: color .3s; }
+  .f-clock.long { font-size: 20cqw; }
+  .f-clock.pop { animation: cdpop .8s cubic-bezier(.2,1.4,.4,1); }
+  @keyframes cdpop { 0% { transform: scale(.4); opacity: 0; } 30% { transform: scale(1.08); opacity: 1; } 100% { transform: scale(1); } }
+  body.counting .f-clock { color: var(--sig); text-shadow: 0 12px 60px rgba(255,216,74,.35); }
+  body.urgent .f-clock { color: var(--coral); animation: thump 1s ease-out infinite; }
+  @keyframes thump { 0% { transform: scale(1.07); } 30% { transform: scale(1); } }
+  body.paused .f-clock { animation: blink .7s infinite alternate; }
+  body.over .f-clock { color: var(--text); animation: overpop .7s cubic-bezier(.2,1.5,.4,1); }
+  @keyframes overpop { 0% { transform: scale(1.18); } 100% { transform: scale(1); } }
+  .f-state { position: absolute; top: 69%; font-size: max(11px, 2.8cqw); letter-spacing: .32em; text-transform: uppercase; color: var(--muted); }
+  body.over .f-state { color: var(--coral); }
+
+
+  .f-actions { display: flex; gap: 14px; align-items: center; justify-content: center; flex-wrap: wrap; min-height: 56px; }
+  .f-link { font-size: 14px; color: var(--muted); text-decoration: underline; text-underline-offset: 4px; padding: 10px; }
+  .f-link:hover { color: var(--text); }
+  body.over #pauseBtn, body.counting #pauseBtn { display: none; }
+  body.over #closeBtn { padding: 12px 30px; border-radius: 999px; border: 1px solid rgba(255,255,255,.18); color: var(--text); text-decoration: none; font-weight: 600; font-size: 16px; }
+  body.over #closeBtn:hover { background: rgba(255,255,255,.06); }
+  .f-keys { font-size: 11px; color: var(--muted); letter-spacing: .06em; }
+  .f-keys kbd { font-family: "JetBrains Mono", monospace; font-size: 10px; border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 5px; padding: 1px 6px; margin: 0 4px 0 10px; color: #c9c7d6; }
+  body.clean .f-keys { opacity: 0; }
+
+  /* ---------- controls ---------- */
+  .controls { display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap; }
+  button { font: inherit; color: inherit; cursor: pointer; border: 0; background: none; }
+  button:focus-visible { outline: 2px solid var(--sig); outline-offset: 3px; }
+  .spin {
+    position: relative; font-weight: 800; font-size: 20px; letter-spacing: -.01em; color: var(--ink);
+    background: var(--sig); padding: 16px 26px; border-radius: 999px; min-width: 150px;
+    box-shadow: 0 5px 0 var(--sig-deep), 0 14px 40px rgba(255,216,74,.28);
+    transition: transform .08s, box-shadow .08s, opacity .2s;
+  }
+  .spin:hover { transform: translateY(-1px); }
+  .spin:active, .spin.press { transform: translateY(4px); box-shadow: 0 1px 0 var(--sig-deep), 0 6px 20px rgba(255,216,74,.2); }
+  .spin:disabled { opacity: .45; cursor: default; transform: none; }
+  .pill { display: flex; align-items: center; gap: 4px; padding: 5px; border: 1px solid var(--line); border-radius: 999px; background: rgba(255,255,255,.03); }
+  .pill button { padding: 9px 9px; border-radius: 999px; font-size: 14px; color: var(--muted); font-family: "JetBrains Mono", monospace; transition: background .2s, color .2s; }
+  .pill button.on { background: rgba(255,255,255,.1); color: var(--text); }
+  .go { padding: 12px 22px; border-radius: 999px; border: 1px solid rgba(255,255,255,.18); font-weight: 600; font-size: 16px; transition: background .2s, border-color .2s; }
+  .go:hover { background: rgba(255,255,255,.06); }
+  .icon { width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--line); display: grid; place-items: center; color: var(--muted); transition: color .2s, border-color .2s; }
+  .icon:hover { color: var(--text); border-color: rgba(255,255,255,.2); }
+  .icon svg { width: 18px; height: 18px; }
+  .icon.off { color: var(--coral); }
+
+  /* ---------- footer ---------- */
+  footer { display: flex; flex-direction: column; align-items: center; gap: 12px; padding-bottom: 6px; }
+  .meta { display: flex; gap: 18px; flex-wrap: wrap; justify-content: center; font-size: 11px; color: var(--muted); letter-spacing: .06em; }
+  .meta kbd { font-family: "JetBrains Mono", monospace; font-size: 10px; border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 5px; padding: 1px 6px; margin-right: 4px; color: #c9c7d6; }
+  .meta button { font-size: 11px; color: var(--muted); text-decoration: underline; text-underline-offset: 3px; letter-spacing: .06em; }
+  .meta button:hover { color: var(--text); }
+  .meta label { display: flex; gap: 6px; align-items: center; cursor: pointer; }
+  .meta input { accent-color: var(--sig); }
+  body.clean footer { opacity: 0; pointer-events: none; }
+  .credit { text-align: center; font-size: 12px; color: var(--muted); letter-spacing: .04em; }
+  .credit a { color: var(--text); text-decoration: none; border-bottom: 1px solid rgba(255,216,74,.5); }
+  .credit a:hover { color: var(--sig); }
+
+  /* ---------- creator tag (stays visible in timer mode and in recordings) ---------- */
+  .ig {
+    display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px 8px 10px; border-radius: 999px;
+    border: 1px solid var(--line); background: rgba(255,255,255,.03); color: var(--text); text-decoration: none;
+    font-family: "JetBrains Mono", monospace; font-size: 13px; transition: border-color .2s, background .2s, color .2s;
+  }
+  .ig svg { width: 18px; height: 18px; color: var(--sig); }
+  .ig:hover { border-color: rgba(255,216,74,.5); background: rgba(255,216,74,.08); }
+  header { position: relative; z-index: 4; }
+
+  button { white-space: nowrap; }
+  @media (max-width: 560px) {
+    .app { padding: 16px; }
+    .controls > .spin { flex: 1 1 100%; }
+    .spin { padding: 14px 30px; font-size: 18px; }
+    .pill button { padding: 8px 10px; font-size: 13px; }
+    .meta .keys { display: none; }
+    .ig { padding: 7px 10px; font-size: 12px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .blob, .grain { animation: none; }
+  }
+</style>
+</head>
+<body>
+<div class="bg"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div><div class="grain"></div></div>
+<div class="vignette"></div>
+
+<div class="app">
+  <header>
+    <div class="brand">
+      <div class="mark" aria-hidden="true">
+        <svg viewBox="0 0 40 40">
+          <rect x="15" y="6" width="10" height="17" rx="5" fill="currentColor"/>
+          <path d="M10 19a10 10 0 0 0 20 0M20 29v4.5M15 33.5h10" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" fill="none"/>
+          <path class="wave" d="M33.5 13.5a8 8 0 0 1 0 9M6.5 13.5a8 8 0 0 0 0 9" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+        </svg>
+      </div>
+      <div>
+        <h1>Speaking <em>Challenge</em></h1>
+        <p>Spin a topic · Prep for 10 min · Speak for 45 sec</p>
+      </div>
+    </div>
+    <a class="ig" data-ig href="#" target="_blank" rel="noopener" title="Follow on Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".6" fill="currentColor"/></svg><span data-ig-handle>@vaibhav_singhania</span></a>
+  </header>
+
+  <main>
+    <div class="status mono"><span class="dot"></span><span id="status">Ready</span></div>
+
+    <div class="reel-wrap">
+      <div class="reel"><div class="strip" id="strip"></div></div>
+      <div class="slot"><span class="flap l"></span><span class="flap r"></span></div>
+    </div>
+
+    <div class="controls">
+      <button class="spin" id="spinBtn">Spin</button>
+      <div class="pill" id="durations">
+        <button data-s="45">45s</button>
+        <button data-s="60" class="on">1 min</button>
+        <button data-s="300">5 min</button>
+        <button data-s="600">10 min</button>
+      </div>
+      <button class="go" id="goBtn">Start timer</button>
+      <button class="icon" id="muteBtn" title="Sound (M)" aria-label="Toggle sound">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path class="wave" d="M15.5 8.5a5 5 0 0 1 0 7M19 5a10 10 0 0 1 0 14"/><path class="x" d="M22 9l-6 6M16 9l6 6" style="display:none"/></svg>
+      </button>
+      <button class="icon" id="fsBtn" title="Fullscreen (F)" aria-label="Fullscreen">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3M21 8V5a2 2 0 0 0-2-2h-3M3 16v3a2 2 0 0 0 2 2h3M16 21h3a2 2 0 0 0 2-2v-3"/></svg>
+      </button>
+    </div>
+  </main>
+
+  <footer>
+    <p class="credit">Made by <a data-ig href="#" target="_blank" rel="noopener"><span data-ig-handle>@vaibhav_singhania</span></a> · follow for the speaking challenge</p>
+    <div class="meta">
+      <label><input type="checkbox" id="fresh" checked /> No repeats</label>
+      <button id="resetBtn">Reset progress</button>
+      <span class="keys"><kbd>Space</kbd>spin <kbd>Enter</kbd>timer <kbd>M</kbd>mute <kbd>F</kbd>fullscreen <kbd>H</kbd>hide UI</span>
+    </div>
+  </footer>
+</div>
+
+<section class="focus" id="focus" aria-live="polite">
+  <div class="f-head">
+    <span class="f-label mono" id="fLabel">Speaking on</span>
+    <h2 class="f-topic" id="fTopic"></h2>
+  </div>
+  <div class="dial">
+    <svg viewBox="0 0 400 400" aria-hidden="true">
+      <g id="ticks"></g>
+      <circle class="track" cx="200" cy="200" r="160" />
+      <circle class="arc" id="arc" cx="200" cy="200" r="160" />
+    </svg>
+    <div class="f-clock" id="fClock">1:00</div>
+    <div class="f-state mono" id="fState"></div>
+  </div>
+  <div class="f-actions">
+    <button class="go" id="pauseBtn">Pause</button>
+    <button class="f-link" id="closeBtn">End</button>
+  </div>
+  <p class="f-keys" id="fKeys"></p>
+</section>
+
+<script>
+/* ================= creator =================
+   Your Instagram handle (without the @). It shows top-right, in the footer, and stays on screen in timer mode. */
+const INSTAGRAM = "vaibhav_singhania".replace(/[^A-Za-z0-9._]/g, "");
+document.querySelectorAll("[data-ig]").forEach(a => (a.href = `https://www.instagram.com/${INSTAGRAM}/`));
+document.querySelectorAll("[data-ig-handle]").forEach(e => (e.textContent = "@" + INSTAGRAM));
+
+/* ================= topics =================
+   Edit this list freely: one topic per line. Add, remove or replace any time. */
+const TOPIC_LIST = [
+  "The Dunning-Kruger Effect",
+  "The Sunk Cost Fallacy",
+  "The Bystander Effect",
+  "The Halo Effect",
+  "The Anchoring Effect",
+  "Confirmation Bias",
+  "The Placebo Effect",
+  "The Barnum Effect",
+  "The Mandela Effect",
+  "Déjà Vu",
+  "The Cocktail Party Effect",
+  "Loss Aversion",
+  "The Decoy Effect",
+  "The Bandwagon Effect",
+  "Impostor Syndrome",
+  "The Benjamin Franklin Effect",
+  "The Hawthorne Effect",
+  "The Pygmalion Effect",
+  "Learned Helplessness",
+  "Cognitive Dissonance",
+  "Hindsight Bias",
+  "The Planning Fallacy",
+  "Survivorship Bias",
+  "The Negativity Bias",
+  "The False Consensus Effect",
+  "The Google Effect",
+  "The Serial Position Effect",
+  "The Tip-of-the-Tongue Feeling",
+  "Brain Freeze",
+  "Why We Get Goosebumps",
+  "Being Hangry",
+  "Earworms",
+  "The Uncanny Valley",
+  "Choice Blindness",
+  "Inattentional Blindness",
+  "The Contrast Effect",
+  "The Scarcity Effect",
+  "Social Proof",
+  "Psychological Reactance",
+  "The Testing Effect",
+  "The Spacing Effect",
+  "The Ostrich Effect",
+  "The Curse of Knowledge",
+  "The Illusion of Control",
+  "Hedonic Adaptation",
+  "Decision Fatigue",
+  "The Self-Serving Bias",
+  "Hypnic Jerks",
+  "Why Time Flies When You're Having Fun",
+  "The Cheerleader Effect",
+  "The Rhyme-as-Reason Effect",
+  "The Bizarreness Effect",
+  "The Name-Letter Effect",
+  "Semantic Satiation",
+  "Optimism Bias",
+];
+const TOPICS = TOPIC_LIST.map((title, i) => ({ id: i, title }));
+
+const PH = { id: -1, title: "What's it going to be?" };
+const BLANK = { id: -2, title: "" };
+
+/* ================= storage (best-effort) ================= */
+const store = {
+  get(k, d) { try { const v = localStorage.getItem("speaking-challenge:" + k); return v == null ? d : JSON.parse(v); } catch { return d; } },
+  set(k, v) { try { localStorage.setItem("speaking-challenge:" + k, JSON.stringify(v)); } catch {} },
+};
+// topics already spoken, remembered by name so editing the list never mixes them up
+let done = new Set([].concat(store.get("spoken", [])).filter(t => TOPIC_LIST.includes(t)));
+const isDone = t => done.has(t.title);
+function markDone(t) { done.add(t.title); store.set("spoken", [...done]); }
+let muted = store.get("muted", false) === true;
+const DURATIONS = [45, 60, 300, 600];
+let duration = store.get("duration", 60);
+if (!DURATIONS.includes(duration)) duration = 60;
+
+/* ================= audio (synthesised, no files) ================= */
+let ac, master;
+function audio() {
+  if (!ac) {
+    ac = new (window.AudioContext || window.webkitAudioContext)();
+    master = ac.createGain(); master.gain.value = .8; master.connect(ac.destination);
+  }
+  if (ac.state === "suspended") ac.resume();
+  return ac;
+}
+function env(g, t, a, peak, d) { g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(peak, t + a); g.gain.exponentialRampToValueAtTime(0.0001, t + a + d); }
+function tone(freq, { type = "sine", t = 0, a = .005, d = .2, vol = .2, to } = {}) {
+  if (muted) return; const c = audio(); const now = c.currentTime + t;
+  const o = c.createOscillator(), g = c.createGain();
+  o.type = type; o.frequency.setValueAtTime(freq, now); if (to) o.frequency.exponentialRampToValueAtTime(to, now + a + d);
+  env(g, now, a, vol, d); o.connect(g).connect(master); o.start(now); o.stop(now + a + d + .05);
+}
+let noiseBuf;
+function noise(dur, { t = 0, f1 = 800, f2 = 3000, q = 1, vol = .2 } = {}) {
+  if (muted) return; const c = audio(); const now = c.currentTime + t;
+  if (!noiseBuf) { noiseBuf = c.createBuffer(1, c.sampleRate * 2, c.sampleRate); const d = noiseBuf.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1; }
+  const s = c.createBufferSource(); s.buffer = noiseBuf;
+  const bp = c.createBiquadFilter(); bp.type = "bandpass"; bp.Q.value = q;
+  bp.frequency.setValueAtTime(f1, now); bp.frequency.exponentialRampToValueAtTime(f2, now + dur);
+  const g = c.createGain(); g.gain.setValueAtTime(0.0001, now); g.gain.exponentialRampToValueAtTime(vol, now + dur * .35); g.gain.exponentialRampToValueAtTime(0.0001, now + dur);
+  s.connect(bp).connect(g).connect(master); s.start(now); s.stop(now + dur + .05);
+}
+const sfx = {
+  tick(speed) { // the flapper clicking past each topic
+    const p = 1 + Math.random() * .08;
+    tone(1650 * p, { type: "square", d: .025, vol: .05 + Math.min(.06, speed * .002) });
+    noise(.03, { f1: 4000, f2: 6000, q: 3, vol: .08 });
+  },
+  whoosh() { noise(.7, { f1: 300, f2: 2600, q: .8, vol: .25 }); tone(110, { type: "sine", d: .4, vol: .18, to: 60 }); },
+  land() { // thunk + bright arpeggio
+    tone(90, { type: "sine", d: .35, vol: .45, to: 45 });
+    noise(.12, { f1: 1200, f2: 300, q: 1, vol: .25 });
+    [523.25, 659.25, 783.99, 1046.5, 1318.5].forEach((f, i) => {
+      tone(f, { type: "triangle", t: .06 + i * .065, d: .9, vol: .12 });
+      tone(f * 2, { type: "sine", t: .06 + i * .065, d: .5, vol: .03 });
+    });
+  },
+  beep(hi) { tone(hi ? 1318.5 : 659.25, { type: "triangle", d: hi ? .5 : .18, vol: .25 }); if (hi) tone(1975, { type: "sine", t: .02, d: .4, vol: .08 }); },
+  clockTick(hi) { tone(hi ? 1400 : 1000, { type: "sine", d: .06, vol: hi ? .22 : .12 }); noise(.04, { f1: 2500, f2: 2500, q: 6, vol: .1 }); },
+  end() {
+    tone(196, { type: "sawtooth", d: .7, vol: .12 }); tone(198.5, { type: "sawtooth", d: .7, vol: .12 });
+    [880, 698.46, 523.25].forEach((f, i) => tone(f, { type: "triangle", t: .25 + i * .14, d: 1.1, vol: .16 }));
+  },
+  click() { tone(500, { type: "sine", d: .05, vol: .08 }); },
+};
+
+/* ================= elements ================= */
+const $ = s => document.querySelector(s);
+const stripEl = $("#strip"), statusEl = $("#status");
+const spinBtn = $("#spinBtn"), goBtn = $("#goBtn"), flaps = document.querySelectorAll(".flap");
+const rowH = () => stripEl.firstElementChild ? stripEl.firstElementChild.getBoundingClientRect().height : 90;
+
+let items = [BLANK, PH, BLANK];   // what's in the strip
+let current = null;               // landed topic
+let spinning = false;
+
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+function rowHTML(t) {
+  const len = Math.max(12, t.title.length);
+  return `<div class="row${t.id === -1 ? " ph" : ""}" style="--len:${len}"><span>${esc(t.title)}</span></div>`;
+}
+function renderStrip(centerIdx) {
+  stripEl.innerHTML = items.map(rowHTML).join("");
+  if (!spinning && current && items[1] && items[1].id === current.id) stripEl.children[1].classList.add("win");
+  setOffset((centerIdx - 1) * rowH());
+}
+function setOffset(px) { stripEl.style.transform = `translate3d(0, ${-px}px, 0)`; }
+
+function setStatus(s) { statusEl.textContent = s; }
+
+/* ================= spin ================= */
+function pickTarget() {
+  const fresh = $("#fresh").checked;
+  let pool = TOPICS.filter(t => (!fresh || !isDone(t)) &&(!current || t.id !== current.id));
+  if (!pool.length) pool = TOPICS.filter(t => !current || t.id !== current.id);
+  return pool[Math.floor(Math.random() * pool.length)];
+}
+function spin() {
+  if (spinning || B.contains("in-focus")) return;
+  audio(); spinning = true;
+  document.body.classList.remove("locked");
+  document.body.classList.add("spinning");
+  spinBtn.disabled = true; spinBtn.textContent = "Spinning…";
+  setStatus("Drawing a topic");
+
+  const target = pickTarget();
+  // keep the visible three rows, then append a long shuffled run, then the target + one filler
+  const run = [], count = 30 + Math.floor(Math.random() * 8);
+  let last = items[2];
+  for (let i = 0; i < count; i++) {
+    let t; do { t = TOPICS[Math.floor(Math.random() * TOPICS.length)]; } while (t.id === last.id || t.id === target.id);
+    run.push(t); last = t;
+  }
+  let after; do { after = TOPICS[Math.floor(Math.random() * TOPICS.length)]; } while (after.id === target.id || after.id === last.id);
+  items = [items[0], items[1], items[2], ...run, target, after];
+  renderStrip(1);
+
+  const H = rowH(), targetIdx = items.length - 2;
+  const D = (targetIdx - 1) * H, over = .3 * H;
+  const T = 4800 + Math.random() * 900, split = .86;
+  const t0 = performance.now();
+  let lastIdx = 0, lastPos = 0, lastT = t0;
+  sfx.whoosh();
+
+  function frame(now) {
+    const t = Math.min(1, (now - t0) / T);
+    let pos;
+    if (t < split) { const u = t / split; pos = (D + over) * (1 - Math.pow(1 - u, 4)); }
+    else { const u = (t - split) / (1 - split); const e = u < .5 ? 2 * u * u : 1 - Math.pow(-2 * u + 2, 2) / 2; pos = D + over - over * e; }
+    setOffset(pos);
+    const v = Math.abs(pos - lastPos) / Math.max(1, now - lastT) * 1000 / H; // rows per second
+    stripEl.style.filter = v > 2 ? `blur(${Math.min(5, v / 7).toFixed(2)}px)` : "none";
+    const idx = Math.round(pos / H);
+    if (idx !== lastIdx) { sfx.tick(v); kick(); lastIdx = idx; }
+    lastPos = pos; lastT = now;
+    if (t < 1) requestAnimationFrame(frame); else land(target, targetIdx);
+  }
+  requestAnimationFrame(frame);
+}
+function kick() { flaps.forEach(f => { f.classList.remove("kick"); void f.offsetWidth; f.classList.add("kick"); }); }
+
+function land(target, idx) {
+  stripEl.style.filter = "none";
+  items = items.slice(idx - 1, idx + 2);
+  current = target; spinning = false;
+  renderStrip(1);
+  document.body.classList.remove("spinning"); document.body.classList.add("locked");
+  spinBtn.disabled = false; spinBtn.textContent = "Spin again";
+  setStatus("Locked in");
+  sfx.land();
+}
+
+/* ================= timer: full-screen focus mode ================= */
+const B = document.body.classList;
+const focusEl = $("#focus"), arcEl = $("#arc"), fClock = $("#fClock"), fState = $("#fState");
+const pauseBtn = $("#pauseBtn"), closeBtn = $("#closeBtn"), fKeys = $("#fKeys");
+const CIRC = 2 * Math.PI * 160;
+arcEl.style.strokeDasharray = CIRC;
+// 60 stopwatch ticks around the dial (the svg is rotated -90deg, so angle 0 = 12 o'clock)
+$("#ticks").innerHTML = Array.from({ length: 60 }, (_, i) => {
+  const a = i / 60 * Math.PI * 2, r1 = i % 5 === 0 ? 176 : 182, r2 = 192;
+  const p = r => [(200 + r * Math.cos(a)).toFixed(1), (200 + r * Math.sin(a)).toFixed(1)];
+  const [x1, y1] = p(r1), [x2, y2] = p(r2);
+  return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" />`;
+}).join("");
+const tickEls = [...document.querySelectorAll("#ticks line")];
+
+const mode = () => (duration >= 300 ? "Prep" : "Speak");
+const timer = { running: false, paused: false, counting: false, end: 0, remaining: 0, raf: 0, lastSec: -1, cd: [] };
+function fmt(s) { s = Math.max(0, Math.ceil(s)); return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`; }
+function keys(html) { fKeys.innerHTML = html; }
+
+function openFocus() {
+  audio();
+  if (spinning || B.contains("in-focus")) return;
+  resetTimer();
+  $("#fTopic").textContent = current ? current.title : "Anything you like";
+  const prep = duration >= 300;
+  $("#fLabel").textContent = current ? (prep ? "Preparing" : "Speaking on") : (prep ? "Free prep" : "Free talk");
+  closeBtn.textContent = "End";
+  B.add("in-focus");
+  render(duration);
+  setStatus(prep ? "Preparing" : "Speaking");
+  go();
+}
+function go() {
+  // no 3-2-1: a quick "Go" and the clock starts
+  timer.counting = true; B.add("counting");
+  fState.textContent = ""; fClock.textContent = "";
+  keys("<kbd>Esc</kbd>cancel");
+  timer.cd.push(setTimeout(() => {
+    fClock.textContent = "Go"; fClock.classList.remove("long"); fClock.classList.add("pop");
+    sfx.beep(true);
+  }, 300));
+  timer.cd.push(setTimeout(() => { timer.counting = false; B.remove("counting"); fClock.classList.remove("pop"); run(); }, 1100));
+}
+function run() {
+  timer.running = true; timer.paused = false; timer.lastSec = -1;
+  timer.end = performance.now() + duration * 1000;
+  B.add("timing"); fState.textContent = mode();
+  keys("<kbd>Space</kbd>pause <kbd>Esc</kbd>end");
+  loop();
+}
+function loop() {
+  const left = (timer.end - performance.now()) / 1000;
+  render(left);
+  const sec = Math.ceil(left);
+  if (sec !== timer.lastSec) {
+    timer.lastSec = sec;
+    if (sec <= 10 && sec > 0) { B.add("urgent"); sfx.clockTick(sec <= 3); }
+    if (sec <= 5 && sec > 0) B.add("pulse");
+  }
+  if (left <= 0) return finish();
+  timer.raf = requestAnimationFrame(loop);
+}
+function render(left) {
+  const frac = Math.max(0, Math.min(1, left / duration));
+  fClock.textContent = fmt(left);
+  fClock.classList.toggle("long", duration >= 600);
+  arcEl.style.strokeDashoffset = CIRC * (1 - frac);
+  const lit = Math.ceil(frac * 60);
+  tickEls.forEach((t, i) => t.classList.toggle("lit", i < lit));
+}
+function finish() {
+  cancelAnimationFrame(timer.raf);
+  timer.running = false;
+  B.remove("timing", "urgent", "pulse");
+  render(0);
+  B.add("over");
+  fClock.textContent = "0:00"; fState.textContent = "Time's up";
+  // the ring sweeps back to full and the ticks light up one by one
+  requestAnimationFrame(() => {
+    arcEl.style.strokeDashoffset = 0;
+    tickEls.forEach((t, i) => { t.style.transitionDelay = `${i * 14}ms`; t.classList.add("lit"); });
+  });
+  closeBtn.textContent = "Close";
+  keys("<kbd>Esc</kbd>close");
+  sfx.end();
+  if (current) markDone(current);
+  setStatus("Done");
+}
+function togglePause() {
+  if (!timer.running) return;
+  if (!timer.paused) {
+    timer.paused = true; timer.remaining = timer.end - performance.now();
+    cancelAnimationFrame(timer.raf);
+    B.add("paused"); fState.textContent = "Paused"; pauseBtn.textContent = "Resume";
+    keys("<kbd>Space</kbd>resume <kbd>Esc</kbd>end");
+  } else {
+    timer.paused = false; timer.end = performance.now() + timer.remaining;
+    B.remove("paused"); fState.textContent = mode(); pauseBtn.textContent = "Pause";
+    keys("<kbd>Space</kbd>pause <kbd>Esc</kbd>end");
+    loop();
+  }
+  sfx.click();
+}
+function resetTimer() {
+  timer.cd.forEach(clearTimeout); timer.cd = [];
+  cancelAnimationFrame(timer.raf);
+  timer.running = timer.counting = timer.paused = false;
+  B.remove("timing", "urgent", "pulse", "paused", "counting", "over");
+  pauseBtn.textContent = "Pause";
+  fClock.classList.remove("pop");
+  tickEls.forEach(t => (t.style.transitionDelay = ""));
+}
+function closeFocus() {
+  if (!B.contains("in-focus")) return;
+  resetTimer(); B.remove("in-focus");
+  setStatus(current ? "Locked in" : "Ready");
+  sfx.click();
+}
+
+/* ================= progress ================= */
+$("#resetBtn").addEventListener("click", () => {
+  if (!confirm("Bring back all spoken topics?")) return;
+  done.clear(); store.set("spoken", []); sfx.click();
+});
+
+/* ================= controls ================= */
+function setDuration(s) {
+  duration = s; store.set("duration", s);
+  document.querySelectorAll("#durations button").forEach(b => b.classList.toggle("on", +b.dataset.s === s));
+}
+document.querySelectorAll("#durations button").forEach(b => b.addEventListener("click", () => { setDuration(+b.dataset.s); sfx.click(); }));
+function setMuted(m) {
+  muted = m; store.set("muted", m);
+  $("#muteBtn").classList.toggle("off", m);
+  $("#muteBtn .wave").style.display = m ? "none" : ""; $("#muteBtn .x").style.display = m ? "" : "none";
+}
+function toggleFs() { if (!document.fullscreenElement) document.documentElement.requestFullscreen?.(); else document.exitFullscreen?.(); }
+
+spinBtn.addEventListener("click", spin);
+goBtn.addEventListener("click", openFocus);
+pauseBtn.addEventListener("click", togglePause);
+closeBtn.addEventListener("click", closeFocus);
+$("#muteBtn").addEventListener("click", () => setMuted(!muted));
+$("#fsBtn").addEventListener("click", toggleFs);
+addEventListener("keydown", e => {
+  if (e.target.closest("input")) return;
+  if (e.key === "Enter" && e.target.closest("a, button")) return; // let Enter activate the focused control
+  const inFocus = B.contains("in-focus");
+  if (e.code === "Space") {
+    e.preventDefault();
+    if (!inFocus) { spinBtn.classList.add("press"); setTimeout(() => spinBtn.classList.remove("press"), 120); spin(); }
+    else if (B.contains("over")) {}
+    else togglePause();
+  }
+  else if (e.key === "Enter") { e.preventDefault(); if (!inFocus) openFocus(); }
+  else if (e.key === "Escape") closeFocus();
+  else if (e.key.toLowerCase() === "m") setMuted(!muted);
+  else if (e.key.toLowerCase() === "f") toggleFs();
+  else if (e.key.toLowerCase() === "h") document.body.classList.toggle("clean");
+});
+addEventListener("resize", () => { if (!spinning) renderStrip(1); });
+
+/* ================= init ================= */
+setMuted(muted); setDuration(duration);
+document.fonts?.ready.then(() => renderStrip(1)); renderStrip(1);
+</script>
+</body>
+</html>
